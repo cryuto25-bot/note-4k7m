@@ -1,0 +1,113 @@
+:root {
+  --ink: #1c2119;
+  --muted: #4d544b;
+  --accent: #0f6b4a;
+  --line: #dde1d8;
+  --s: 1;
+  --sans: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", "YuGothic",
+    "Noto Sans JP", system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: #eceee9;
+  color: var(--ink);
+  font-family: var(--sans);
+  overflow: hidden;
+}
+
+.stage-wrap {
+  position: fixed;
+  inset: 0 0 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stage {
+  position: relative;
+  width: 1280px;
+  height: 720px;
+  flex: none;
+  background: #fff;
+  transform: scale(var(--s));
+  transform-origin: center center;
+  overflow: hidden;
+}
+
+.slide {
+  display: none;
+  position: absolute;
+  inset: 0;
+  flex-direction: column;
+  justify-content: center;
+  padding: 76px 104px;
+}
+.slide.on { display: flex; }
+
+.slide h2 {
+  margin: 0 0 44px;
+  font-size: 62px;
+  line-height: 1.35;
+  font-weight: 700;
+  letter-spacing: .01em;
+}
+.slide h2::after {
+  content: "";
+  display: block;
+  width: 96px;
+  height: 5px;
+  margin-top: 26px;
+  background: var(--accent);
+}
+
+.slide p {
+  margin: 0 0 22px;
+  font-size: 40px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.slide p:last-child { margin-bottom: 0; }
+
+.slide.first h2 { font-size: 56px; }
+.slide.first p { font-size: 36px; color: var(--muted); }
+
+.cue {
+  background: #0e110d;
+  align-items: center;
+  justify-content: center;
+}
+.cue p {
+  color: #fff;
+  font-size: 76px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  margin: 0;
+}
+
+.num {
+  position: absolute;
+  right: 40px;
+  bottom: 32px;
+  font-size: 24px;
+  color: #8b9188;
+  z-index: 2;
+}
+.stage.on-cue .num { color: #6b726a; }
+
+.hint {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0;
+  padding: 10px 0;
+  text-align: center;
+  font-size: 14px;
+  color: #6b726a;
+}
+
+:fullscreen .hint { display: none; }
+:fullscreen .stage-wrap { inset: 0; }
