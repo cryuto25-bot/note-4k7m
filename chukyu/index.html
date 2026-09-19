@@ -315,11 +315,12 @@
 
 <section id="s7">
 <h2><span class="snum">7</span><span class="stext">最初と今の回答を比べる</span></h2>
-<p>10分で、回答と貼り直す手間を分けて確かめます。これは普段の使い方と今回の使い方を1回比べるものです。保存したことだけの効果や、今後の回答がいつもよくなることまで証明するものではありません。</p>
-<h3>2分: Afterを送る</h3>
-<p>いま作ったプロジェクトまたはGemで新しい会話を開きます。2で残した依頼文をそのまま投げてください。基本情報と季節の情報は貼り直しません。今回の文章・目的・読者・期限などは、Beforeと同じものを投げます。同じAIを使い、モデルを選べる場合は同じモデルにしてください。</p>
+<p>この10分では、背景情報を毎回貼り直さなくても、希望に合う回答を得られるかを確かめます。同じ依頼で回答を受け取り、最初の回答と比べ、貼り直す手間を確認します。最後に、必要な箇所を1つ見直します。</p>
+<p>普段は基本情報を貼っている方は、貼り直さずに同じ程度以上の回答を得られれば、手間を減らせています。回答が希望に合うかは、2で決めた3つの条件で確認します。</p>
+<h3>2分: 今回の回答を受け取る</h3>
+<p>Beforeは2で残した最初の回答、Afterは今から受け取る今回の回答です。いま作ったプロジェクトまたはGemで新しい会話を開き、2で残した依頼文をそのまま投げてください。基本情報と季節の情報は貼り直しません。今回の文章・目的・読者・期限などは、最初の回答と同じものを投げます。同じAIを使い、モデルを選べる場合は同じモデルにしてください。</p>
 <h3>4分: 回答を比べる</h3>
-<p>2で決めた3つの条件ごとに、BeforeとAfterを「満たす／要修正／判断できない」で記録します。そう判断した回答内の言葉や一文を、根拠として1点書いてください。</p>
+<p>2で決めた3つの条件ごとに、最初の回答（Before）と今回の回答（After）を「満たす／要修正／判断できない」で記録します。そう判断した回答内の言葉や一文を、根拠として1点書いてください。</p>
 <div class="compare-record" data-compare-record data-record-id="comparison-v1">
 <p class="record-guide">条件を書き、BeforeとAfterの判定と根拠を記録します。入力内容はこのブラウザに保存されます。別の端末へ移すときは、記録をコピーしてください。</p>
 <article class="record-row">
@@ -340,24 +341,21 @@
 <li><input type="checkbox" id="ck11"><label for="ck11">日時・名前・数字などが元の文章と合い、書かれていない事実も加わっていない</label></li>
 <li><input type="checkbox" id="ck12"><label for="ck12">事実が変わった、または書かれていない事実が加わったため、修正が必要</label></li>
 </ul>
-<h3>2分: 手間と反映を記録する</h3>
+<h3>2分: 貼り直した手間を記録する</h3>
 <div class="compare-record" data-compare-record data-record-id="effort-v1">
-<p class="record-guide">貼り直す手間と、保存した条件の反映を記録します。入力内容はこのブラウザに保存されます。別の端末へ移すときは、記録をコピーしてください。</p>
+<p class="record-guide">最初の回答と今回の回答で、基本情報を貼り直したかを記録します。入力内容はこのブラウザに保存されます。別の端末へ移すときは、記録をコピーしてください。</p>
 <article class="record-row record-row-compact"><div class="record-condition"><h4>基本情報を今回の会話に貼ったか</h4></div><div class="record-side"><h4>Before</h4><label class="record-field"><span>記録</span><select name="basic-before" data-record-field><option value="">未選択</option><option>貼った</option><option>貼らなかった</option></select></label></div><div class="record-side"><h4>After</h4><label class="record-field"><span>記録</span><select name="basic-after" data-record-field><option value="">未選択</option><option>貼った</option><option>貼らなかった</option></select></label></div></article>
-<article class="record-row record-row-compact"><div class="record-condition"><h4>保存した文体や制約が回答に反映されたか</h4></div><div class="record-side"><h4>Before</h4><label class="record-field"><span>記録</span><select name="reflect-before" data-record-field><option value="">未選択</option><option>対象外</option><option>反映</option><option>未反映</option><option>判断できない</option></select></label></div><div class="record-side"><h4>After</h4><label class="record-field"><span>記録</span><select name="reflect-after" data-record-field><option value="">未選択</option><option>反映</option><option>未反映</option><option>判断できない</option></select></label></div></article>
-<article class="record-row record-row-compact"><div class="record-condition"><h4>根拠になる回答内の箇所</h4></div><div class="record-side"><label class="record-field record-note"><span>Beforeの根拠</span><textarea name="basic-before-reason" data-record-field rows="3" placeholder="回答内の言葉や一文"></textarea></label></div><div class="record-side"><label class="record-field record-note"><span>Afterの根拠</span><textarea name="basic-after-reason" data-record-field rows="3" placeholder="回答内の言葉や一文"></textarea></label></div></article>
 <div class="record-actions"><button class="record-copy" type="button" data-record-copy>記録をコピー</button><span class="record-status" aria-live="polite"></span></div></div>
-<p>基本情報を貼らなかっただけでは成功とはしません。保存した文体や制約が回答に表れているかも一緒に見ます。普段から基本情報を貼っている方は、同じ程度以上の回答を貼り直さず得られたら、手間が省けています。普段からプロジェクトやGemを使っている方は、新たな手間の削減を無理に探さず、回答が3つの条件に合うかを確認してください。</p>
-<h3>2分: 見直す</h3>
-<p>回答だけを直したい場合は、次を同じ会話へ貼ってください。</p>
+<p>Beforeでは貼り、Afterでは貼らずに同じ程度以上の回答を得られた場合は、貼り直す手間が減っています。普段からプロジェクトやGemを使っている方は、手間の違いを無理に探さず、回答が3つの条件に合うかを確認してください。これは最初の回答と今回の回答を1回だけ比べるものです。保存したことだけの効果や、今後の回答がいつもよくなることまで証明するものではありません。</p>
+<h3>2分: 必要な箇所を見直す</h3>
+<p>今回の回答だけを直したい場合は、次を同じ会話へ貼ってください。</p>
 <div class="copy" data-copy>
 <div class="copy-bar"><button class="copy-btn" type="button" data-copy-btn aria-describedby="cp11">コピー</button></div>
 <pre id="cp11" data-copy-src><code>次の条件が守られていません: [守られていない条件]
 元の文章の事実を変えず、この条件が反映されるように直してください。直した箇所も1点示してください。</code></pre>
 </div>
-<p>保存した条件そのものが不足している、古い、または矛盾している場合は、指示欄の該当箇所を1つ直します。時間があれば、別の新しい会話で同じ依頼を投げ、直した条件が反映されたか確認してください。最初の比較記録は上書きせずに残します。</p>
+<p>保存した指示そのものが不足している、古い、または矛盾している場合は、指示欄の該当箇所を1つ直します。時間があれば、別の新しい会話で同じ依頼を投げ、直した指示が反映されたか確認してください。最初の比較記録は上書きせずに残します。</p>
 <p>待ち時間や無料枠の上限で確認できなかった項目は「判断できない」と書き、次に直す1点を持ち帰ってください。</p>
-<p>仕組みを入れたら、回答と手間を分けて確かめます。</p>
 </section>
 
 <section id="s8">
