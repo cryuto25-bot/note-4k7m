@@ -2,6 +2,7 @@
 // 実行: node build.mjs  （依存パッケージなし・Node 22）
 import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, copyFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, basename } from 'node:path';
 import { parsePage, parseSlides } from './md.mjs';
@@ -69,11 +70,16 @@ function shot(ref, depth) {
   return { src: `${depth}assets/img/${name}`, w: dim.w, h: dim.h };
 }
 
+function assetHref(depth, file) {
+  const hash = createHash('sha256').update(readFileSync(join(here, 'assets', file))).digest('hex').slice(0, 12);
+  return `${depth}assets/${file}?v=${hash}`;
+}
+
 const head = (title, depth, css) => `<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
 <title>${title}</title>
-<link rel="stylesheet" href="${depth}assets/${css}">`;
+<link rel="stylesheet" href="${assetHref(depth, css)}">`;
 
 function pageTitle(title) {
   if (title === 'AI×暮らし ― 自分専用の「暮らしのカルテ」をつくる2時間') {
@@ -123,7 +129,7 @@ ${herbArt()}
 ${doc.html}
 </main>
 <footer class="foot"><p>${doc.footer}</p></footer>
-<script src="${depth}assets/site.js"></script>
+<script src="${assetHref(depth, 'site.js')}"></script>
 `;
 }
 
@@ -139,7 +145,7 @@ ${renderedSlides.join('\n')}
 <div class="num"><span id="cur">1</span> / ${n}</div>
 </div></div>
 <p class="hint">→ ← Space で送る・f で全画面</p>
-<script src="${depth}assets/slides.js"></script>
+<script src="${assetHref(depth, 'slides.js')}"></script>
 `;
 }
 
