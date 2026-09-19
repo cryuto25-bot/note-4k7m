@@ -7,7 +7,8 @@ const esc = (s) =>
 const inline = (s) =>
   esc(s)
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/`([^`]+)`/g, '<code>$1</code>');
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, '<a href="$2">$1</a>');
 
 const TOOLS = { ChatGPT: 'chatgpt', Claude: 'claude', Gemini: 'gemini' };
 
@@ -27,13 +28,22 @@ function table(rows, opts = {}) {
       .map((c) => c.trim());
   const head = cells(rows[0]);
   const body = rows.slice(2).map(cells);
-  const th = head.map((c) => `<th scope="col">${inline(c)}</th>`).join('');
+  const isFlow = opts.linkIds && head[1] === 'やること';
+  const isPath = head.includes('14時の回') && head.includes('17時の回') && head.includes('その先の回');
+  const currentColumn = isPath ? head.indexOf(opts.currentCourse) : -1;
+  const pathClass = (i) => (i === currentColumn ? ' class="path-now"' : '');
+  const th = head.map((c, i) => `<th scope="col"${pathClass(i)}>${inline(c)}${i === currentColumn ? '<span class="path-now-label">今回</span>' : ''}</th>`).join('');
+  const flowAction = (cell) => {
+    const match = cell.match(/^\*\*(.+?)\*\*<br>(.+)$/);
+    if (!match) return inline(cell);
+    return `<strong class="flow-label">${inline(match[1])}</strong><span class="flow-note">${inline(match[2])}</span>`;
+  };
   const tb = body
     .map((r) => {
       const tds = r.map((c, i) => {
         const isLast = i === r.length - 1;
-        const html = opts.linkIds && isLast ? linkNums(inline(c), opts.linkIds) : inline(c);
-        return i === 0 ? `<th scope="row">${html}</th>` : `<td>${html}</td>`;
+        const html = isFlow && i === 1 ? flowAction(c) : opts.linkIds && isLast ? linkNums(inline(c), opts.linkIds) : inline(c);
+        return i === 0 ? `<th scope="row">${html}</th>` : `<td${pathClass(i)}>${html}</td>`;
       });
       return `<tr>${tds.join('')}</tr>`;
     })
@@ -46,6 +56,36 @@ function copyBlock(text, n) {
 <div class="copy-bar"><button class="copy-btn" type="button" data-copy-btn aria-describedby="cp${n}">コピー</button></div>
 <pre id="cp${n}" data-copy-src><code>${esc(text)}</code></pre>
 </div>`;
+}
+
+const select = (name, label, options) => `<label class="record-field"><span>${label}</span><select name="${name}" data-record-field><option value="">未選択</option>${options.map((o) => `<option>${o}</option>`).join('')}</select></label>`;
+const area = (name, label, placeholder) => `<label class="record-field record-note"><span>${label}</span><textarea name="${name}" data-record-field rows="3" placeholder="${placeholder}"></textarea></label>`;
+const input = (name, label, placeholder) => `<label class="record-field record-condition"><span>${label}</span><input name="${name}" data-record-field type="text" placeholder="${placeholder}"></label>`;
+
+function recordBlock(kind) {
+  if (kind === 'comparison') {
+    const rows = [
+      ['reader', '条件1', '例: AIに慣れていない方にも内容が伝わる'],
+      ['tone', '条件2', '例: やわらかい敬体になっている'],
+      ['constraint', '条件3', '例: 避けたい表現や守る制約を守っている'],
+    ].map(([name, label, placeholder]) => `<article class="record-row">
+${input(`${name}-condition`, label, placeholder)}
+<div class="record-side"><h4>Before</h4>${select(`${name}-before-status`, '判定', ['満たす', '要修正', '判断できない'])}${area(`${name}-before-reason`, '根拠1点', '回答内の言葉や一文')}</div>
+<div class="record-side"><h4>After</h4>${select(`${name}-after-status`, '判定', ['満たす', '要修正', '判断できない'])}${area(`${name}-after-reason`, '根拠1点', '回答内の言葉や一文')}</div>
+</article>`).join('');
+    return `<div class="compare-record" data-compare-record data-record-id="comparison-v1">
+<p class="record-guide">条件を書き、BeforeとAfterの判定と根拠を記録します。入力内容はこのブラウザに保存されます。別の端末へ移すときは、記録をコピーしてください。</p>
+${rows}<div class="record-actions"><button class="record-copy" type="button" data-record-copy>記録をコピー</button><span class="record-status" aria-live="polite"></span></div></div>`;
+  }
+  if (kind === 'effort') {
+    return `<div class="compare-record" data-compare-record data-record-id="effort-v1">
+<p class="record-guide">貼り直す手間と、保存した条件の反映を記録します。入力内容はこのブラウザに保存されます。別の端末へ移すときは、記録をコピーしてください。</p>
+<article class="record-row record-row-compact"><div class="record-condition"><h4>基本情報を今回の会話に貼ったか</h4></div><div class="record-side"><h4>Before</h4>${select('basic-before', '記録', ['貼った', '貼らなかった'])}</div><div class="record-side"><h4>After</h4>${select('basic-after', '記録', ['貼った', '貼らなかった'])}</div></article>
+<article class="record-row record-row-compact"><div class="record-condition"><h4>保存した文体や制約が回答に反映されたか</h4></div><div class="record-side"><h4>Before</h4>${select('reflect-before', '記録', ['対象外', '反映', '未反映', '判断できない'])}</div><div class="record-side"><h4>After</h4>${select('reflect-after', '記録', ['反映', '未反映', '判断できない'])}</div></article>
+<article class="record-row record-row-compact"><div class="record-condition"><h4>根拠になる回答内の箇所</h4></div><div class="record-side">${area('basic-before-reason', 'Beforeの根拠', '回答内の言葉や一文')}</div><div class="record-side">${area('basic-after-reason', 'Afterの根拠', '回答内の言葉や一文')}</div></article>
+<div class="record-actions"><button class="record-copy" type="button" data-record-copy>記録をコピー</button><span class="record-status" aria-live="polite"></span></div></div>`;
+  }
+  return '';
 }
 
 function shotFigure(name, caption, shot) {
@@ -79,6 +119,11 @@ function blocks(lines, ctx) {
       i++;
       const text = buf.join('\n');
       out.push(kind === 'copy' ? copyBlock(text, ++ctx.copyN) : `<pre><code>${esc(text)}</code></pre>`);
+      continue;
+    }
+    if (/^:::\s*record\s+/.test(line)) {
+      out.push(recordBlock(line.replace(/^:::\s*record\s+/, '').trim()));
+      i++;
       continue;
     }
     if (/^:::\s*tabs/.test(line)) {
@@ -121,7 +166,7 @@ function blocks(lines, ctx) {
       while (i < lines.length && lines[i].trim().startsWith('|')) rows.push(lines[i++]);
       const first = !ctx.tableSeen;
       ctx.tableSeen = true;
-      out.push(table(rows, first && ctx.linkIds ? { linkIds: ctx.linkIds } : {}));
+      out.push(table(rows, { linkIds: first ? ctx.linkIds : null, currentCourse: ctx.currentCourse }));
       continue;
     }
     if (/^-\s+/.test(line)) {
@@ -194,7 +239,15 @@ export function parsePage(md, shot) {
     const m = l.match(/^##\s+(\d+)\./);
     if (m) ids.add(`s${m[1]}`);
   });
-  const ctx = { copyN: 0, tabN: 0, checkN: 0, shot, linkIds: ids, tableSeen: false };
+  const ctx = {
+    copyN: 0,
+    tabN: 0,
+    checkN: 0,
+    shot,
+    linkIds: ids,
+    tableSeen: false,
+    currentCourse: title.includes('2時間') ? '14時の回' : '17時の回',
+  };
   const secs = [];
   let cur = null;
   for (const l of rest) {

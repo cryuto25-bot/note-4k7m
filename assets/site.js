@@ -48,6 +48,87 @@
     }
   });
 
+  /* 中級・比較演習の記録（このブラウザ内だけに保存） */
+  [].slice.call(document.querySelectorAll('[data-compare-record]')).forEach(function (record) {
+    var recordId = record.getAttribute('data-record-id') || 'record';
+    var key = 'ai-lab-compare-record-v1:' + recordId;
+    var fields = [].slice.call(record.querySelectorAll('[data-record-field]'));
+    var status = record.querySelector('.record-status');
+
+    function showStatus(message) {
+      if (status) status.textContent = message;
+    }
+
+    function values() {
+      var result = {};
+      fields.forEach(function (field) { result[field.name] = field.value; });
+      return result;
+    }
+
+    function save() {
+      try {
+        localStorage.setItem(key, JSON.stringify(values()));
+        showStatus('このブラウザに保存しました');
+      } catch (e) {
+        showStatus('このブラウザでは保存できません。記録をコピーしてください');
+      }
+    }
+
+    try {
+      var savedRecord = JSON.parse(localStorage.getItem(key) || '{}');
+      fields.forEach(function (field) {
+        if (typeof savedRecord[field.name] === 'string') field.value = savedRecord[field.name];
+      });
+    } catch (e) {
+      showStatus('このブラウザでは保存できません。記録をコピーしてください');
+    }
+
+    fields.forEach(function (field) {
+      field.addEventListener('input', save);
+      field.addEventListener('change', save);
+    });
+
+    function fieldText(field) {
+      return (field.value || '未記入').trim() || '未記入';
+    }
+
+    function recordText() {
+      return '比較演習の記録\n\n' + [].slice.call(record.querySelectorAll('.record-row')).map(function (row) {
+        var condition = row.querySelector('.record-condition');
+        var conditionField = condition && condition.querySelector('[data-record-field]');
+        var title = conditionField
+          ? '条件: ' + fieldText(conditionField)
+          : (condition && condition.querySelector('h4') ? condition.querySelector('h4').textContent.trim() : '記録');
+        var sides = [].slice.call(row.querySelectorAll('.record-side')).map(function (side) {
+          var heading = side.querySelector('h4');
+          var entries = [].slice.call(side.querySelectorAll('[data-record-field]')).map(function (field) {
+            var label = field.closest('label');
+            var labelText = label && label.querySelector('span') ? label.querySelector('span').textContent.trim() : '記録';
+            return labelText + ': ' + fieldText(field);
+          });
+          return (heading ? heading.textContent.trim() + '\n' : '') + entries.join('\n');
+        });
+        return title + '\n' + sides.join('\n');
+      }).join('\n\n');
+    }
+
+    var copy = record.querySelector('[data-record-copy]');
+    if (copy) copy.addEventListener('click', function () {
+      var text = recordText();
+      function copied() { showStatus('記録をコピーしました'); }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(copied, function () {
+          if (fallbackCopy(text)) copied();
+          else showStatus('コピーできませんでした');
+        });
+      } else if (fallbackCopy(text)) {
+        copied();
+      } else {
+        showStatus('コピーできませんでした');
+      }
+    });
+  });
+
   /* ツール切替タブ（ページ内の全タブ群が連動・選択はlocalStorage） */
   var groups = [].slice.call(document.querySelectorAll('[data-tabs]'));
   if (!groups.length) return;
