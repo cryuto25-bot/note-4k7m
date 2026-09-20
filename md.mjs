@@ -79,10 +79,8 @@ ${rows}<div class="record-actions"><button class="record-copy" type="button" dat
   }
   if (kind === 'effort') {
     return `<div class="compare-record" data-compare-record data-record-id="effort-v1">
-<p class="record-guide">貼り直す手間と、保存した条件の反映を記録します。入力内容はこのブラウザに保存されます。別の端末へ移すときは、記録をコピーしてください。</p>
+<p class="record-guide">最初の回答と今回の回答で、基本情報を貼り直したかを記録します。入力内容はこのブラウザに保存されます。別の端末へ移すときは、記録をコピーしてください。</p>
 <article class="record-row record-row-compact"><div class="record-condition"><h4>基本情報を今回の会話に貼ったか</h4></div><div class="record-side"><h4>Before</h4>${select('basic-before', '記録', ['貼った', '貼らなかった'])}</div><div class="record-side"><h4>After</h4>${select('basic-after', '記録', ['貼った', '貼らなかった'])}</div></article>
-<article class="record-row record-row-compact"><div class="record-condition"><h4>保存した文体や制約が回答に反映されたか</h4></div><div class="record-side"><h4>Before</h4>${select('reflect-before', '記録', ['対象外', '反映', '未反映', '判断できない'])}</div><div class="record-side"><h4>After</h4>${select('reflect-after', '記録', ['反映', '未反映', '判断できない'])}</div></article>
-<article class="record-row record-row-compact"><div class="record-condition"><h4>根拠になる回答内の箇所</h4></div><div class="record-side">${area('basic-before-reason', 'Beforeの根拠', '回答内の言葉や一文')}</div><div class="record-side">${area('basic-after-reason', 'Afterの根拠', '回答内の言葉や一文')}</div></article>
 <div class="record-actions"><button class="record-copy" type="button" data-record-copy>記録をコピー</button><span class="record-status" aria-live="polite"></span></div></div>`;
   }
   return '';
